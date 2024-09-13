@@ -1,0 +1,25 @@
+.card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    background-color: #fff;
+  }
+  
+  .card h2 {
+    font-size: 1.2rem;
+  }
+  
+  .card p {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  @media (max-width: 768px) {
+    .card {
+      padding: 5px;
+    }
+  
+    .card h2 {
+      font-size: 1rem;
+    }
+  }
+  
