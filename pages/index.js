@@ -1,23 +1,21 @@
+// pages/index.js
 import Head from 'next/head';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import styles from '../styles/Home.module.css'; // Import CSS module for styling
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
+export default function Home({ products }) {
+  const [wishlist, setWishlist] = useState([]);
 
-  useEffect(() => {
-    async function fetchProducts() {
-      const res = await fetch('https://fakestoreapi.com/products');
-      const data = await res.json();
-      setProducts(data);
+  const addToWishlist = (product) => {
+    if (!wishlist.includes(product)) {
+      setWishlist([...wishlist, product]);
     }
-    fetchProducts();
-  }, []);
+  };
 
   return (
-    <div className={styles.container}>
-      {/* SEO Meta Information */}
+    <>
       <Head>
         <title>My Shop - Best Products</title>
         <meta name="description" content="Shop the best products online" />
@@ -25,34 +23,69 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      {/* Page Header */}
-      <header className={styles.header}>
-        <h1 className={styles.title}>Welcome to My Shop</h1>
-        <h2 className={styles.subtitle}>Best Products Available</h2>
+      <header>
+        <div className="logo">
+          <h1>My Shop</h1>
+        </div>
+        <div className="search-bar">
+          <input type="text" placeholder="Search for products..." />
+        </div>
       </header>
 
-      {/* Product Grid */}
-      <div className={styles.grid}>
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div key={product.id} className={styles.card}>
-              {/* Product Image */}
+      <aside className="sidebar">
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">Men</a>
+        <a href="#">Women</a>
+        <a href="#">Kids</a>
+        <a href="#">Sale</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Wishlist ({wishlist.length})</a>
+      </aside>
+
+      <main>
+        <h1>Featured Products</h1>
+        <div className="grid">
+          {products.map((product) => (
+            <div key={product.id} className="product-card">
               <Image
                 src={product.image}
-                alt={`Image of ${product.title}`}
-                width={200}
-                height={200}
-                className={styles.productImage}
+                alt={product.title}
+                width={150}
+                height={150}
               />
-              {/* Product Information */}
-              <h3 className={styles.productTitle}>{product.title}</h3>
-              <p className={styles.price}>${product.price.toFixed(2)}</p>
+              <h2>{product.title}</h2>
+              <p>{product.description.slice(0, 50)}...</p>
+              <p className="price">${product.price}</p>
+              <button className="add-to-cart-btn">Add to Cart</button>
+              <button
+                className="wishlist-btn"
+                onClick={() => addToWishlist(product)}
+              >
+                <FontAwesomeIcon icon={faHeart} className="heart-icon" />
+              </button>
             </div>
-          ))
-        ) : (
-          <p>Loading products...</p>
-        )}
-      </div>
-    </div>
+          ))}
+        </div>
+      </main>
+
+      <footer>
+        <p>© 2024 My Shop. All rights reserved.</p>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+      </footer>
+    </>
   );
+}
+
+export async function getStaticProps() {
+  const res = await fetch('https://fakestoreapi.com/products');
+  const products = await res.json();
+
+  return {
+    props: {
+      products,
+    },
+  };
 }
